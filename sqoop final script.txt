@@ -1,0 +1,60 @@
+ wget http://mirrors.ibiblio.org/apache/sqoop/1.4.5/sqoop-1.4.5.bin__hadoop-1.0.0.tar.gz
+  tar -zxvf sqoop-1.4.5.bin__hadoop-1.0.0.tar.gz
+ sudo mv sqoop-1.4.5.bin__hadoop-1.0.0 /usr/local/sqoop
+nano ~/.bashrc
+export SQOOP_HOME=/usr/local/sqoop 
+export PATH=$PATH:$SQOOP_HOME/bin
+
+ source ~/.bashrc
+
+cd $SQOOP_HOME/conf
+
+mv sqoop-env-template.sh sqoop-env.sh
+export HADOOP_COMMON_HOME=/usr/local/hadoop 
+export HADOOP_MAPRED_HOME=/usr/local/hadoop
+
+wget http://ftp.ntu.edu.tw/MySQL/Downloads/Connector-J/mysql-connector-java-5.1.30.tar.gz
+
+tar -zxf mysql-connector-java-5.1.30.tar.gz
+
+cd $SQOOP_HOME/bin
+
+ sqoop-version
+
+ sudo apt-get install mysql-server mysql-client
+_______________________________________________import___________________________________
+ mysql -u root -p
+mysql> create database testDb;
+mysql> use testDb;
+mysql> create table student(id integer,name char(20));
+mysql> insert into student values(1,'rauhaan');
+mysql> insert into student values(2,'khurram');
+mysql> exit;
+
+nano import.txt
+import
+--connect
+jdbc:mysql://localhost/testDb
+--username
+root
+--password
+hadoop
+
+sqoop --options-file /home/ubuntu/import.txt --table student -m 1
+
+_____________________________________________export______________________________
+mysql -u root -p
+
+create database test;
+use test;
+grant all privileges on test.* to ''@localhost ;
+
+create table stud1(id integer,name char(20)); 
+exit; 
+
+hadoop dfs -cat /user/ubuntu/student 
+sqoop export --connect jdbc:mysql://localhost/test --password hadoop  --table stud1 -m 1 --export-dir /user/ubuntu/student
+
+ mysql -u root -p
+user test;
+select * from stud1
